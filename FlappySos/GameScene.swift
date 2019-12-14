@@ -20,6 +20,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var character: Character!
         var ground: SKShapeNode!
         var sky: SKShapeNode!
+        var obsticle: Obsticle!
 
         override func didMove(to view: SKView) {
 //            creates detection of collision
@@ -60,22 +61,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bestScore.text = "Best Score: \(UserDefaults.standard.integer(forKey: "bestScore"))"
             bestScore.fontColor = SKColor.white
             self.addChild(bestScore)
-
             player = Player(scene: self)
         }
     
     
         override func update(_ currentTime: TimeInterval) {
-            
+            if player.gameStarted{
+                obsticle.changePosition()
+            }
         }
     
          override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //        this fun runs everytime someone touches the screen. It looks what was touched and if the play_button was touched it will start the game
-                
+            var counter: Int = 0
             for touch in touches {
                 let location = touch.location(in: self)
                 let touchedNode = self.nodes(at: location)
                 for node in touchedNode {
+                    counter += 1
                     if node.name == "play_button" {
                         startGame()
                     }
@@ -91,11 +94,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
             }
+            counter = 0
         }
     
 //    Triggered when contact occurs
         func didBegin(_ contact: SKPhysicsContact) {
-            player.touchedTexture()
+            
+            let collision = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+            
+            if collision == (0b001 << 2) | 0b001 {
+                player.touchedTexture()
+            }
+            
             
         }
     
@@ -126,8 +136,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.prepareForGame()
             ground = player.ground
             sky = player.sky
+            obsticle = Obsticle(self)
+            
             self.addChild(ground)
-            self.addChild(sky)
         }
     
         private func changeCharacter() {

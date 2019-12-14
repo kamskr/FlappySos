@@ -24,12 +24,14 @@ class Player {
     var gameStarted: Bool!
     var ground: SKShapeNode!
     var sky: SKShapeNode!
+    var obsticle: Obsticle!
     
 
     init(scene: GameScene){
         self.scene = scene
         self.readyToPlay = false
         self.gameStarted = false
+        
         initializePlayer()
     }
     
@@ -46,24 +48,14 @@ class Player {
             playerNode.physicsBody?.usesPreciseCollisionDetection = true
             playerNode.physicsBody?.isDynamic = false
             playerNode.physicsBody?.restitution = 0
-            playerNode.physicsBody?.contactTestBitMask = 0b001
+            playerNode.physicsBody?.collisionBitMask = 0b001 << 2
+            playerNode.physicsBody?.categoryBitMask = 0b001
             animation = SKAction.animate(with: playerAnimation, timePerFrame: 0.1)
             playerNode?.run(SKAction.repeatForever(animation!))
             scene.addChild(playerNode)
         }
     }
-    
-//    private func update(time: Double) {
-//           if nextTime == nil {
-//               nextTime = time + timeExtension
-//           } else {
-//               if time >= nextTime! {
-//                   nextTime = time + timeExtension
-//                   updatePlayerPosition()
-//                print("update")
-//               }
-//           }
-//       }
+
     func prepareForGame () {
 
 
@@ -76,21 +68,9 @@ class Player {
         ground.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
         ground.physicsBody?.restitution = 0
 //        ground.alpha = 0
+        ground.physicsBody?.categoryBitMask = 0b001 << 2
         ground.physicsBody?.contactTestBitMask = 0b001
         ground.physicsBody?.isDynamic = false
-        
-      
-        var splinePointsSky = [CGPoint(x: -500, y: (scene.frame.size.height / 2) + 25),
-                                  CGPoint(x: 500, y: (scene.frame.size.height / 2) + 25)]
-        
-        sky = SKShapeNode(splinePoints: &splinePointsSky, count: splinePointsSky.count)
-        
-        sky.lineWidth = 50
-        sky.zPosition = 1
-        sky.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
-        sky.physicsBody?.restitution = 0
-        sky.physicsBody?.isDynamic = false
-        sky.physicsBody?.contactTestBitMask = 0b001
         
         animation = SKAction.animate(with: playerAnimation, timePerFrame: 0.05)
         playerNode.removeAllActions()
@@ -112,13 +92,19 @@ class Player {
     func bounce() {
         playerNode.run(SKAction.repeat(animation!, count: 1))
         playerNode.physicsBody?.applyImpulse(CGVector(dx: 0,dy: 100))
-        //apply rotation on bounceś
+        playerNode.run(SKAction.rotate(toAngle: 0.7, duration: 0.1)) {
+            self.playerNode.run(SKAction.rotate(toAngle: -1.5, duration: 1.3))
+        }
+      
     }
     
     
     
     func touchedTexture() {
+        gameStarted = false
         playerNode.physicsBody?.isDynamic = false
+        playerNode.removeAllActions()
+    
     }
     
     
