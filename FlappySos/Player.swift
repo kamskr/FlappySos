@@ -25,6 +25,10 @@ class Player {
     var ground: SKShapeNode!
     var sky: SKShapeNode!
     var obsticle: Obsticle!
+    var groundBitMask = UInt32(1)
+    var obsticleBitMask = UInt32(2)
+    var playerBitMask = UInt32(4)
+         
     
 
     init(scene: GameScene){
@@ -48,8 +52,8 @@ class Player {
             playerNode.physicsBody?.usesPreciseCollisionDetection = true
             playerNode.physicsBody?.isDynamic = false
             playerNode.physicsBody?.restitution = 0
-            playerNode.physicsBody?.collisionBitMask = 0b001 << 2
-            playerNode.physicsBody?.categoryBitMask = 0b001
+            playerNode.physicsBody?.contactTestBitMask = groundBitMask | obsticleBitMask
+            playerNode.physicsBody?.categoryBitMask = playerBitMask
             animation = SKAction.animate(with: playerAnimation, timePerFrame: 0.1)
             playerNode?.run(SKAction.repeatForever(animation!))
             scene.addChild(playerNode)
@@ -67,9 +71,9 @@ class Player {
         ground.zPosition = 1
         ground.physicsBody = SKPhysicsBody(edgeChainFrom: ground.path!)
         ground.physicsBody?.restitution = 0
-//        ground.alpha = 0
-        ground.physicsBody?.categoryBitMask = 0b001 << 2
-        ground.physicsBody?.contactTestBitMask = 0b001
+        ground.alpha = 0
+        ground.physicsBody?.categoryBitMask = groundBitMask
+        ground.physicsBody?.collisionBitMask = playerBitMask
         ground.physicsBody?.isDynamic = false
         
         animation = SKAction.animate(with: playerAnimation, timePerFrame: 0.05)
@@ -84,6 +88,7 @@ class Player {
     func startGame() {
         if readyToPlay {
             readyToPlay = false
+            obsticle = Obsticle(scene)
             playerNode.physicsBody?.isDynamic = true
             gameStarted = true
         }
@@ -102,8 +107,15 @@ class Player {
     
     func touchedTexture() {
         gameStarted = false
-        playerNode.physicsBody?.isDynamic = false
         playerNode.removeAllActions()
+        playerNode.physicsBody?.isDynamic = false
+        obsticle.pillar1.physicsBody?.isDynamic = false
+        obsticle.pillarUD1.physicsBody?.isDynamic = false
+        obsticle.pillar2.physicsBody?.isDynamic = false
+        obsticle.pillarUD2.physicsBody?.isDynamic = false
+        obsticle.pillar3.physicsBody?.isDynamic = false
+        obsticle.pillarUD3.physicsBody?.isDynamic = false
+        
     
     }
     

@@ -20,8 +20,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var character: Character!
         var ground: SKShapeNode!
         var sky: SKShapeNode!
-        var obsticle: Obsticle!
-
+     
+    
         override func didMove(to view: SKView) {
 //            creates detection of collision
             self.physicsWorld.contactDelegate = self
@@ -67,18 +67,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
         override func update(_ currentTime: TimeInterval) {
             if player.gameStarted{
-                obsticle.changePosition()
+                player.obsticle.changePosition()
             }
         }
     
          override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //        this fun runs everytime someone touches the screen. It looks what was touched and if the play_button was touched it will start the game
-            var counter: Int = 0
+            
             for touch in touches {
                 let location = touch.location(in: self)
                 let touchedNode = self.nodes(at: location)
                 for node in touchedNode {
-                    counter += 1
+                    
                     if node.name == "play_button" {
                         startGame()
                     }
@@ -89,22 +89,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         player.startGame()
                     }
                     
-                    if player.gameStarted {
+                    if player.gameStarted && node.name != "pillar" {
                         player.bounce()
+                        
                     }
                 }
             }
-            counter = 0
+            
         }
     
 //    Triggered when contact occurs
         func didBegin(_ contact: SKPhysicsContact) {
             
-            let collision = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
-            
-            if collision == (0b001 << 2) | 0b001 {
+//            let collision = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+//
+//            if collision == (0b001 << 2) | 0b001 {
                 player.touchedTexture()
-            }
+            
             
             
         }
@@ -136,7 +137,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.prepareForGame()
             ground = player.ground
             sky = player.sky
-            obsticle = Obsticle(self)
             
             self.addChild(ground)
         }
