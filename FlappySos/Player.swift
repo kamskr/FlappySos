@@ -28,6 +28,9 @@ class Player {
     var groundBitMask = UInt32(1)
     var obsticleBitMask = UInt32(2)
     var playerBitMask = UInt32(4)
+    var score = 0
+    var scoreLabel: SKLabelNode!
+    
          
     
 
@@ -83,6 +86,15 @@ class Player {
             self.playerNode?.run(SKAction.move(to: CGPoint(x: -((self.scene.scene!.frame.size.width) / 4), y: 0), duration: 0.2))
             self.readyToPlay = true
         }
+      
+       
+        scoreLabel = SKLabelNode(fontNamed: "MarkerFelt-Wide")
+        scoreLabel.zPosition = 1
+        scoreLabel.position = CGPoint(x: 0, y: (scene.scene!.frame.size.height / 2.7))
+        scoreLabel.fontSize = 100
+        scoreLabel.text = "\(score)"
+        scoreLabel.fontColor = SKColor.white
+        scene.addChild(scoreLabel)
     }
     
     func startGame() {
@@ -103,7 +115,10 @@ class Player {
       
     }
     
-    
+    func updateScore(){
+        score += 1
+        scoreLabel.text = "\(score)"
+    }
     
     func touchedTexture() {
         gameStarted = false
@@ -113,6 +128,12 @@ class Player {
         obsticle.pillarUD1.physicsBody?.isDynamic = false
         obsticle.pillar2.physicsBody?.isDynamic = false
         obsticle.pillarUD2.physicsBody?.isDynamic = false
+        
+        if score > UserDefaults.standard.integer(forKey: "bestScore") {
+            UserDefaults.standard.set(score, forKey: "bestScore")
+        }
+        score = 0
+        scene.bestScore.text = "Best Score: \(UserDefaults.standard.integer(forKey: "bestScore"))"
 
     }
     

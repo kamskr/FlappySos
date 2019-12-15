@@ -18,7 +18,7 @@ class Obsticle {
     var pillarUD3: SKSpriteNode!
     
     var y: CGFloat = 750
-   
+    var scoreFlag: Bool! = true
     var obsticleBitMask = UInt32(2)
     var playerBitMask = UInt32(4)
     static var speed: CGFloat = 2
@@ -57,19 +57,21 @@ class Obsticle {
     
     func changePosition() {
         if scene.player.gameStarted {
+            
+            checkIfScored()
              pillar1.position.x -= Obsticle.speed
              pillarUD1.position.x -= Obsticle.speed
             
             pillar2.position.x -= Obsticle.speed
             pillarUD2.position.x -= Obsticle.speed
-            
+        
             if (pillar1.position.x < CGFloat(-(scene.scene!.frame.size.width)/2)) {
                 let randomTemp = CGFloat.random(in: -300...300)
                 pillar1.position.x += jump
                 pillarUD1.position.x += jump
-                
                 pillar1.position.y = (-750 + randomTemp)
                 pillarUD1.position.y = (750 + randomTemp)
+                scoreFlag = true
                 
             }
             
@@ -77,9 +79,9 @@ class Obsticle {
                 let randomTemp = CGFloat.random(in: -300...300)
                 pillar2.position.x += jump
                 pillarUD2.position.x += jump
-                
                 pillar2.position.y = (-750 + randomTemp)
                 pillarUD2.position.y = (750 + randomTemp)
+                scoreFlag = true
             }
             
 
@@ -87,6 +89,14 @@ class Obsticle {
        
     }
     
+    func checkIfScored(){
+        if pillar1.position.x <= -((scene.scene!.frame.size.width) / 4) || pillar2.position.x <= -((self.scene.scene!.frame.size.width) / 4) {
+            if scoreFlag {
+                scene.player.updateScore()
+                scoreFlag = false
+            }
+        }
+    }
    
         
        
