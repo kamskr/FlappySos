@@ -18,18 +18,20 @@ class Obsticle {
     var pillarUD3: SKSpriteNode!
     
     var y: CGFloat = 750
-    var random: CGFloat = CGFloat.random(in: -300...300)
    
     var obsticleBitMask = UInt32(2)
     var playerBitMask = UInt32(4)
     static var speed: CGFloat = 2
-    
+    var jump: CGFloat!
+    var border: CGFloat = -500
     init(_ scene: GameScene) {
         self.scene = scene
         initializeObsticles()
     }
     
     private func initializeObsticles() {
+        let ran1 = CGFloat.random(in: -300...300)
+        let ran2 = CGFloat.random(in: -300...300)
         
         pillar1 = generatePillar(image: "piller")
         pillarUD1 = generatePillar(image: "pillerUD")
@@ -37,26 +39,20 @@ class Obsticle {
         pillar2 = generatePillar(image: "piller")
         pillarUD2 = generatePillar(image: "pillerUD")
         
-        pillar3 = generatePillar(image: "piller")
-        pillarUD3 = generatePillar(image: "pillerUD")
+        pillar1.position = CGPoint(x: scene.scene!.frame.size.width, y: (-750 + ran1))
+        pillarUD1.position = CGPoint(x: scene.scene!.frame.size.width, y: (750 + ran1))
         
-        pillar1.position = CGPoint(x: 300, y: -750)
-        pillarUD1.position = CGPoint(x: 300, y: 750)
+        pillar2.position = CGPoint(x: scene.scene!.frame.size.width * 1.5, y: (-750 + ran2))
+        pillarUD2.position = CGPoint(x: scene.scene!.frame.size.width * 1.5, y: (750 + ran2))
         
-        pillar2.position = CGPoint(x: 600, y: (-750 + random))
-        pillarUD2.position = CGPoint(x: 600, y: (750 + random))
-        
-        pillar3.position = CGPoint(x: 900, y: -750)
-        pillarUD3.position = CGPoint(x: 900, y: 750)
-        
+
         scene.addChild(pillar1)
         scene.addChild(pillarUD1)
         
         scene.addChild(pillar2)
         scene.addChild(pillarUD2)
-        
-        scene.addChild(pillar3)
-        scene.addChild(pillarUD3)
+        jump = scene.scene!.frame.size.width
+
     }
     
     func changePosition() {
@@ -67,30 +63,31 @@ class Obsticle {
             pillar2.position.x -= Obsticle.speed
             pillarUD2.position.x -= Obsticle.speed
             
-            pillar3.position.x -= Obsticle.speed
-            pillarUD3.position.x -= Obsticle.speed
-            
-            if checkPosition(node1: pillar1, node2: pillarUD1){
-                pillar1.position.x = 500
-                pillarUD1.position.x = 500
+            if (pillar1.position.x < CGFloat(-(scene.scene!.frame.size.width)/2)) {
+                let randomTemp = CGFloat.random(in: -300...300)
+                pillar1.position.x += jump
+                pillarUD1.position.x += jump
+                
+                pillar1.position.y = (-750 + randomTemp)
+                pillarUD1.position.y = (750 + randomTemp)
+                
             }
             
-            if checkPosition(node1: pillar2, node2: pillarUD2){
-                pillar2.position.x = 500
-                pillarUD2.position.x = 500
+            if (pillar2.position.x < CGFloat(-(scene.scene!.frame.size.width)/2)) {
+                let randomTemp = CGFloat.random(in: -300...300)
+                pillar2.position.x += jump
+                pillarUD2.position.x += jump
+                
+                pillar2.position.y = (-750 + randomTemp)
+                pillarUD2.position.y = (750 + randomTemp)
             }
             
-            if checkPosition(node1: pillar3, node2: pillarUD3){
-                pillar3.position.x = 500
-                pillarUD3.position.x = 500
-            }
+
         }
        
     }
     
-    private func checkPosition(node1: SKSpriteNode, node2: SKSpriteNode) -> Bool {
-        return (node1.position.x == -500 && node2.position.x == -500)
-    }
+   
         
        
     private func generatePillar(image: String) -> SKSpriteNode {

@@ -113,10 +113,7 @@ class Player {
         obsticle.pillarUD1.physicsBody?.isDynamic = false
         obsticle.pillar2.physicsBody?.isDynamic = false
         obsticle.pillarUD2.physicsBody?.isDynamic = false
-        obsticle.pillar3.physicsBody?.isDynamic = false
-        obsticle.pillarUD3.physicsBody?.isDynamic = false
-        
-    
+
     }
     
     
